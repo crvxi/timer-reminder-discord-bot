@@ -2,17 +2,20 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from ActivityManager import ActivityManager
 from Properties import Properties
 
 
 class TimerCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        self.activity_manager = ActivityManager()
         super().__init__()
 
     @app_commands.command(name="timer", description="Set a timer with a message")
     @app_commands.describe(minutes="Duration in minutes", message="Message to display when timer ends")
-    async def command_timer(self, interaction, minutes: int, message: str):
+    async def command_timer(self, interaction: discord.Interaction, minutes: int, message: str):
+        self.activity_manager.add_activity(minutes, message, interaction)
         await interaction.response.send_message(f"Timer set for {minutes} minutes: {message}")
 
     @commands.Cog.listener()
